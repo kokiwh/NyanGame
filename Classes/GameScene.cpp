@@ -64,9 +64,6 @@ bool Game::init()
     // タップイベントを取得する
     touchEnabled(true);
     
-    // バックキー・メニューキーを取得する(androidのみ)
-    setKeypadEnabled(true);
-    
     // 変数初期化
     initForVariables();
     
@@ -210,7 +207,7 @@ void Game::getTouchBlockTag(Point touchPoint, int &tag, kBlock &blockType)
             Node* node = m_background->getChildByTag(currentTag);
             // タッチ判定
             // コマが存在する && タップしたポイントにコマがある
-            if (node && node->boundingBox().containsPoint(touchPoint)) {
+            if (node && node->getBoundingBox().containsPoint(touchPoint)) {
                 // コマのタグを設定
                 tag = currentTag;
                 // コマの種類を設定
@@ -548,7 +545,7 @@ void Game::showLabel()
     while (it != blockTypes.end()) {
         // コマ残数表示
         // コマのタグを種類毎に保持している配列のサイズを取得
-        int count = m_blockTags[*it].size();
+        int count = (int)m_blockTags[*it].size();
         // コマ残数をstring型にする config.hで定義済み
         const char* countStr = ccsf("%02d", count);
 
@@ -559,11 +556,7 @@ void Game::showLabel()
         if (!label)
         {
             // 起動直後に通る
-            // コマ残数生成 ラベル作成
-            label = Label::createWithBMFont(fontNames[*it], countStr);
-            label->setPosition(Point(bgSize.width * 0.8, bgSize.height * heightRate[*it]));
-            m_background->addChild(label, kZOrderLabel, tagsForLabel[*it]);
-            
+
             // 画像のタグよりインスタンスを取得
             kBlock blockType = (kBlock)(*it);
             BlockSprite* blockSprite = (BlockSprite*)m_background->getChildByTag(blockType);
@@ -572,6 +565,14 @@ void Game::showLabel()
             sprite->setPosition(Point(bgSize.width * 0.74, bgSize.height * heightRate[*it]));
             // 画像を背景のスプライトに組み込み
             m_background->addChild(sprite,kZOrderLabel, blockType);
+
+            
+            
+            
+            // コマ残数生成 ラベル作成
+            label = Label::createWithBMFont(fontNames[*it], countStr);
+            label->setPosition(Point(bgSize.width * 0.8, bgSize.height * heightRate[*it]));
+            m_background->addChild(label, kZOrderLabel, tagsForLabel[*it]);
             
         }
         else
